@@ -69,6 +69,7 @@ private:
         float inputVolume = 0.0f;
    // void initialiseBuilder(foleys::MagicGUIBuilder& builder);
         foleys::MagicPlotSource* analyser = nullptr;
+        foleys::MagicPlotSource* analyserOutput = nullptr;
 
 
     //==============================================================================

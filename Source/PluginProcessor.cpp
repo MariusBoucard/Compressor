@@ -31,6 +31,9 @@ CompressorAudioProcessor::CompressorAudioProcessor()
 
     }) {
  //      analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+ analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+  analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
+
     magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
 
     FOLEYS_SET_SOURCE_PATH(__FILE__);
@@ -133,6 +136,8 @@ void CompressorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
        spec.sampleRate = sampleRate;
     spec.maximumBlockSize = static_cast<juce::uint32> (samplesPerBlock);
     spec.numChannels = static_cast<juce::uint32> (getTotalNumOutputChannels());
+analyser->prepareToPlay (sampleRate, samplesPerBlock);
+analyserOutput->prepareToPlay (sampleRate, samplesPerBlock);
 
     compressor.prepare(spec);
     // Use this method as the place to do any pre-playback
@@ -186,7 +191,7 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         }
     }
     inputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
-
+analyser->pushSamples (buffer);
 
     std::cout << "Hello, world!" << std::endl;
 
@@ -198,7 +203,8 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     juce::dsp::AudioBlock<float> audioBlock(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
     compressor.process(context);
-   
+   analyserOutput->pushSamples (buffer);
+
 }
 
 void CompressorAudioProcessor::updateCompressorParameters() {
