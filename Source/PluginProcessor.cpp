@@ -24,7 +24,7 @@ CompressorAudioProcessor::CompressorAudioProcessor()
  ,parameters(*this, nullptr, juce::Identifier("Compressor"),
     {
  std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "inputVolume",  1 },"Input Volume",0.0f,100.0f,50.0),
-       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threashold",0.0f,100.0f,50.0f),
+       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threshold",-40.0f,0.0f,0.0f),
        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "attack",  1 },"Attack",0.0f,100.0f,50.0f),
         std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "release",  1 },"Release",0.0f,100.0f,50.0f),
         std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f)
@@ -197,18 +197,22 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
     juce::dsp::AudioBlock<float> audioBlock(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
-    //compressor.process(context);
+    compressor.process(context);
    
 }
 
 void CompressorAudioProcessor::updateCompressorParameters() {
-    compressorParameters.threshold = *parameters.getRawParameterValue("threshold") * 0.01f;
-    compressorParameters.attack = *parameters.getRawParameterValue("attack") * 0.01f;
-    compressorParameters.release = *parameters.getRawParameterValue("release") * 0.01f;
-    compressorParameters.ratio = *parameters.getRawParameterValue("ratio") * 0.01f;
-    *parameters.getRawParameterValue("inputVolume") = inputVolume;
+    compressorParameters.threshold = *parameters.getRawParameterValue("threshold") ;
+    compressorParameters.attack = *parameters.getRawParameterValue("attack")*0.01f;
+    compressorParameters.release = *parameters.getRawParameterValue("release");
+    compressorParameters.ratio = *parameters.getRawParameterValue("ratio") ;
+    *parameters.getRawParameterValue("inputVolume") = compressorParameters.ratio;
 
-
+    // Debug output
+    std::cout << "Threshold: " << compressorParameters.threshold << std::endl;
+    std::cout << "Attack: " << compressorParameters.attack << std::endl;
+    std::cout << "Release: " << compressorParameters.release << std::endl;
+    std::cout << "Ratio: " << compressorParameters.ratio << std::endl;
     compressor.setAttack(compressorParameters.attack);
     compressor.setRelease(compressorParameters.release);
     compressor.setRatio(compressorParameters.ratio);

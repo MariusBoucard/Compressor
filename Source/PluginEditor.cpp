@@ -13,10 +13,18 @@
 CompressorAudioProcessorEditor::CompressorAudioProcessorEditor (CompressorAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-      auto& builder = audioProcessor.getMagicState().builder;
-  builder.registerType<InputVolumeDisplay>("InputVolumeDisplay", [&p](const juce::ValueTree& node) {
-        return std::make_unique<InputVolumeDisplay>(p.getMagicState());
-    });
+    auto inputVolumeSlider = std::make_unique<juce::Slider>();
+
+    // Configure the Slider
+    inputVolumeSlider->setRange(0.0, 1.0);
+    inputVolumeSlider->setValue(audioProcessor.getMagicState().getPropertyAsValue("inputVolume").getValue());
+
+    // Add the Slider to the editor
+    addAndMakeVisible(inputVolumeSlider.get());
+
+    // Transfer ownership of the Slider to the editor
+    inputVolumeSlider.release();
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
