@@ -235,10 +235,11 @@ void CompressorAudioProcessor::updateCompressorParameters() {
 
 //
 
-//juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
-//{
-//   return new CompressorAudioProcessorEditor (*this);
-//}
+juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
+{
+    return new foleys::MagicPluginEditor(magicState);
+  return new CompressorAudioProcessorEditor (*this);
+}
 
 //==============================================================================
 void CompressorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)

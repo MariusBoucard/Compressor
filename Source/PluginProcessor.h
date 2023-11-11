@@ -1,5 +1,4 @@
-/*
-  ==============================================================================
+/*==============================================================================
 
     This file contains the basic framework code for a JUCE plugin processor.
 
@@ -54,6 +53,7 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    juce::AudioProcessorEditor* createEditor();
   struct CompressorParameters
         {
             float threshold = 0.5f;
