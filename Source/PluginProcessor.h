@@ -8,7 +8,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "ThreasholdLineSource.h"
+#include "resources/HorizontalLineSource.h"
+// #include "ThreasholdLineSource.h"
 //==============================================================================
 /**
 */
@@ -53,7 +54,8 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    juce::AudioProcessorEditor* createEditor();
+    // juce::AudioProcessorEditor* createEditor();
+    //==============================================================================
   struct CompressorParameters
         {
             float threshold = 0.5f;
@@ -61,6 +63,7 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
             float release = 0.5f;
             float ratio = 0.9f;
         } compressorParameters;
+
     juce::dsp::Compressor<float> compressor;
     juce::AudioProcessorValueTreeState parameters;
     float getInputVolume() const { return inputVolume; }
@@ -71,8 +74,8 @@ private:
    // void initialiseBuilder(foleys::MagicGUIBuilder& builder);
         foleys::MagicPlotSource* analyser = nullptr;
         foleys::MagicPlotSource* analyserOutput = nullptr;
-
-      foleys::MagicProcessorState magicState { *this };
+        HorizontalLineSource* lineSource = nullptr;
+      // foleys::MagicProcessorState magicState { *this };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorAudioProcessor)
 };

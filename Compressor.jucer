@@ -4,6 +4,18 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="oXUuYS" name="Compressor">
     <GROUP id="{DD661678-B72A-E686-D3DB-3AABD9675267}" name="Source">
+      <GROUP id="{559436F1-1671-1E40-B396-EEBD0C13A0EE}" name="resources">
+        <FILE id="PVvOqt" name="HorizontalLineSource.h" compile="0" resource="0"
+              file="Source/resources/HorizontalLineSource.h"/>
+        <FILE id="egBNnd" name="InputVolumeDisplay.h" compile="0" resource="0"
+              file="Source/resources/InputVolumeDisplay.h"/>
+        <FILE id="s9PErm" name="LookAndFeel.h" compile="0" resource="0" file="Source/resources/LookAndFeel.h"/>
+        <FILE id="TC9JHa" name="lookNFeel.h" compile="0" resource="0" file="Source/resources/lookNFeel.h"/>
+        <FILE id="KzOh7D" name="magic.xml" compile="0" resource="1" file="Source/resources/magic.xml"/>
+        <FILE id="BuWT1e" name="test.xml" compile="0" resource="1" file="Source/resources/test.xml"/>
+        <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
+              file="Source/resources/ThreasholdLineSource.h"/>
+      </GROUP>
       <FILE id="F97vnb" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="JEE4UG" name="PluginProcessor.h" compile="0" resource="0"

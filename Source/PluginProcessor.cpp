@@ -7,9 +7,28 @@
 */
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "LookAndFeel.h"
-
+#include "resources/LookAndFeel.h"
+// #include "resources/HorizontalLineSource.h"
+// #include "resources/ThresholdLineSource.h"
 //==============================================================================
+
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+{
+    //  std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "inputVolume",  1 },"Input Volume",0.0f,100.0f,50.0),
+    //    std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threshold",-40.0f,0.0f,0.0f),
+    //    std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "attack",  1 },"Attack",0.0f,100.0f,50.0f),
+    //     std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "release",  1 },"Release",0.0f,100.0f,50.0f),
+    //     std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f)
+
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "inputVolume",  1 },"Input Volume",0.0f,100.0f,50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threshold",-40.0f,0.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "attack",  1 },"Attack",0.0f,100.0f,50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "release",  1 },"Release",0.0f,100.0f,50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f));
+    return layout;
+}
+
 CompressorAudioProcessor::CompressorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : foleys::MagicProcessor(BusesProperties()
@@ -21,24 +40,46 @@ CompressorAudioProcessor::CompressorAudioProcessor()
 #endif
      )
 #endif
- ,parameters(*this, nullptr, juce::Identifier("Compressor"),
-    {
- std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "inputVolume",  1 },"Input Volume",0.0f,100.0f,50.0),
-       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threshold",-40.0f,0.0f,0.0f),
-       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "attack",  1 },"Attack",0.0f,100.0f,50.0f),
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "release",  1 },"Release",0.0f,100.0f,50.0f),
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f)
+ ,parameters(*this, nullptr, juce::Identifier("Compressor"),createParameterLayout()) {
+    FOLEYS_SET_SOURCE_PATH(__FILE__);
 
-    }) {
+    auto file = juce::File::getSpecialLocation (juce::File::currentApplicationFile)
+        .getChildFile ("Contents")
+        .getChildFile ("resources")
+        .getChildFile ("test.xml");
+
+    if (file.existsAsFile())
+        magicState.setGuiValueTree (file);
+    else
+        magicState.setGuiValueTree (BinaryData::test_xml, BinaryData::test_xmlSize);
+
+/*
+Possibilité de créer des objets custom
+
+magicState.registerObjectFactory("MyCustomObject", [](const juce::Identifier& type) {
+    return std::make_unique<MyCustomObject>();
+});
+auto myObject = magicState.createAndAddObject<MyCustomObject>("MyCustomObject");
+*/
+
+/*
+Ce sont des entrées qui sont envoyées en continue dans le plugin, sont elles mappées avec treeState ?
+*/
 analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
 analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
+//  lineSource = magicState.createAndAddObject<HorizontalLineSource>("HorizontalLine");
 //  auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
 //     magicState.createAndAddObject<foleys::MagicPlotSource>("thresholdLine", std::move(thresholdLineSource));
 // // Add a threshold line at -20 dBFS
 
-magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
+// auto threshold = magicState.createAndAddObject<foleys::AtomicValueAttachment>("waveform");
 
-    FOLEYS_SET_SOURCE_PATH(__FILE__);
+// auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
+    lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
+// Add a threshold line at -20 dBFS
+magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
+    magicState.setPlayheadUpdateFrequency (30);
+
     FOLEYS_ENABLE_BINARY_DATA;
 
     compressorParameters.attack = 0.95f;
@@ -51,8 +92,8 @@ magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
     compressor.setThreshold(0.5f);
     // Set the GUI file
     // Load the XML file
-    juce::File file = juce::File::getCurrentWorkingDirectory().getChildFile("magic.xml");
-    std::unique_ptr<juce::XmlElement> xml = juce::parseXML(file);
+    // juce::File file = juce::File::getCurrentWorkingDirectory().getChildFile("magic.xml");
+    // std::unique_ptr<juce::XmlElement> xml = juce::parseXML(file);
 
     // Convert the XML to a ValueTree
 
@@ -209,6 +250,7 @@ analyser->pushSamples (buffer);
     juce::dsp::AudioBlock<float> audioBlock(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
     compressor.process(context);
+    lineSource->setYPosition(compressorParameters.threshold/(-40.0f));
    analyserOutput->pushSamples (buffer);
 
 }
@@ -229,17 +271,18 @@ void CompressorAudioProcessor::updateCompressorParameters() {
     compressor.setRelease(compressorParameters.release);
     compressor.setRatio(compressorParameters.ratio);
        compressor.setThreshold(compressorParameters.threshold);
+       lineSource->setYPosition(0.5f);  // Set the line to the middle of the plot
 }
 
 //SUPPR HASEDITORS
 
 //
 
-juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
-{
-    return new foleys::MagicPluginEditor(magicState,BinaryData::magic_xml,BinaryData::magic_xmlSize);
-  return new CompressorAudioProcessorEditor (*this);
-}
+// juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
+// {
+//     return new foleys::MagicPluginEditor(magicState,BinaryData::magic_xml,BinaryData::magic_xmlSize);
+//   return new CompressorAudioProcessorEditor (*this);
+// }
 
 //==============================================================================
 void CompressorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
