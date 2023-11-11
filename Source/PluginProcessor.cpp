@@ -30,11 +30,15 @@ CompressorAudioProcessor::CompressorAudioProcessor()
         std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f)
 
     }) {
- //      analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
- analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
-  analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
+analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
 
-    magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
+// Add a threshold line at -20 dBFS
+juce::Path thresholdLine;
+    thresholdLine.startNewSubPath(0, 0);
+    thresholdLine.lineTo(200, 200);
+// analyser->createPlotPaths(thresholdLine, juce::Path(), juce::Rectangle<float>(0, 0, 200, 200),foleys::MagicPlotComponent &component);
+magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
 
     FOLEYS_SET_SOURCE_PATH(__FILE__);
     FOLEYS_ENABLE_BINARY_DATA;
