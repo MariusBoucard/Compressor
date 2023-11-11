@@ -32,12 +32,10 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     }) {
 analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
 analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
+//  auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
+//     magicState.createAndAddObject<foleys::MagicPlotSource>("thresholdLine", std::move(thresholdLineSource));
+// // Add a threshold line at -20 dBFS
 
-// Add a threshold line at -20 dBFS
-juce::Path thresholdLine;
-    thresholdLine.startNewSubPath(0, 0);
-    thresholdLine.lineTo(200, 200);
-// analyser->createPlotPaths(thresholdLine, juce::Path(), juce::Rectangle<float>(0, 0, 200, 200),foleys::MagicPlotComponent &component);
 magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
 
     FOLEYS_SET_SOURCE_PATH(__FILE__);
