@@ -5,9 +5,9 @@
 
   ==============================================================================
 */
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "LookAndFeel.h"
 
 //==============================================================================
 CompressorAudioProcessor::CompressorAudioProcessor()
@@ -49,24 +49,28 @@ magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
     compressor.setRelease(0.5f);   
     compressor.setRatio(0.9f);
     compressor.setThreshold(0.5f);
+    // Set the GUI file
+    // Load the XML file
+    juce::File file = juce::File::getCurrentWorkingDirectory().getChildFile("magic.xml");
+    std::unique_ptr<juce::XmlElement> xml = juce::parseXML(file);
 
+    // Convert the XML to a ValueTree
 
-
+    // magicState.setGuiValueTree(*xml);
 }
 
 CompressorAudioProcessor::~CompressorAudioProcessor()
 {
 }
-//void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder& builder)
-//{
-//    builder.registerJUCEFactories();
-//    builder.registerJUCELookAndFeels();
+void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder& builder)
+{
+   builder.registerJUCEFactories();
+   builder.registerJUCELookAndFeels();
 
-    //std::unique_ptr<juce::LookAndFeel> lookAndFeel = std::make_unique<juce::LookAndFeel>(RotaryLookAndFeel());
+    // std::unique_ptr<juce::LookAndFeel> lookAndFeel = std::make_unique<juce::LookAndFeel>(LookAndFeel());
 
-   // builder.registerLookAndFeel("Rotary Weezy", std::make_unique<RotaryLookAndFeel>());
-  //  builder.registerLookAndFeel("Planet LookAndFeel", std::make_unique<PlanetLookAndFeel>());
-//}
+   builder.registerLookAndFeel("slide", std::make_unique<LookAndFeel>());
+}
 
 //==============================================================================
 const juce::String CompressorAudioProcessor::getName() const

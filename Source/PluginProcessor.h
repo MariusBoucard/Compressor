@@ -30,7 +30,8 @@ public:
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
-
+// }
+void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
 
