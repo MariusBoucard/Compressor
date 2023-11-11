@@ -237,7 +237,7 @@ void CompressorAudioProcessor::updateCompressorParameters() {
 
 juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
 {
-    return new foleys::MagicPluginEditor(magicState);
+    return new foleys::MagicPluginEditor(magicState,BinaryData::magic_xml,BinaryData::magic_xmlSize);
   return new CompressorAudioProcessorEditor (*this);
 }
 

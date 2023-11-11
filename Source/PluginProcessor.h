@@ -65,14 +65,14 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     juce::AudioProcessorValueTreeState parameters;
     float getInputVolume() const { return inputVolume; }
 
-            foleys::MagicProcessorState& getMagicState() { return magicState; }
+            // foleys::MagicProcessorState& getMagicState() { return magicState; }
 private:
         float inputVolume = 0.0f;
    // void initialiseBuilder(foleys::MagicGUIBuilder& builder);
         foleys::MagicPlotSource* analyser = nullptr;
         foleys::MagicPlotSource* analyserOutput = nullptr;
 
-
+      foleys::MagicProcessorState magicState { *this };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorAudioProcessor)
 };
