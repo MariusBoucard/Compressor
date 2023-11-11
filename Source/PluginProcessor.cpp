@@ -46,12 +46,12 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     auto file = juce::File::getSpecialLocation (juce::File::currentApplicationFile)
         .getChildFile ("Contents")
         .getChildFile ("resources")
-        .getChildFile ("test.xml");
+        .getChildFile ("magictest.xml");
 
     if (file.existsAsFile())
         magicState.setGuiValueTree (file);
     else
-        magicState.setGuiValueTree (BinaryData::test_xml, BinaryData::test_xmlSize);
+        magicState.setGuiValueTree (BinaryData::magictest_xml, BinaryData::magictest_xmlSize);
 
 /*
 Possibilité de créer des objets custom
@@ -77,7 +77,7 @@ analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
 // auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
     lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
 // Add a threshold line at -20 dBFS
-magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
+// magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
     magicState.setPlayheadUpdateFrequency (30);
 
     FOLEYS_ENABLE_BINARY_DATA;

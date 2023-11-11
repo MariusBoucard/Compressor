@@ -26,10 +26,7 @@ public:
     circlePath.addEllipse(centerX - radius, centerY - radius, radius * 2.0f, radius * 2.0f);
     path.addPath(circlePath, juce::AffineTransform::identity);
     }
-    void drawPlot(){
 
-        
-    };
 
     void setYPosition(float newPosition)
     {

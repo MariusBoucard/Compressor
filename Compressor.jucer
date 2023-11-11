@@ -12,6 +12,7 @@
         <FILE id="s9PErm" name="LookAndFeel.h" compile="0" resource="0" file="Source/resources/LookAndFeel.h"/>
         <FILE id="TC9JHa" name="lookNFeel.h" compile="0" resource="0" file="Source/resources/lookNFeel.h"/>
         <FILE id="KzOh7D" name="magic.xml" compile="0" resource="1" file="Source/resources/magic.xml"/>
+        <FILE id="hhoTwm" name="magictest.xml" compile="0" resource="1" file="Source/resources/magictest.xml"/>
         <FILE id="BuWT1e" name="test.xml" compile="0" resource="1" file="Source/resources/test.xml"/>
         <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
               file="Source/resources/ThreasholdLineSource.h"/>
