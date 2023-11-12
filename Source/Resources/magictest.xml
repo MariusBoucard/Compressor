@@ -25,20 +25,23 @@
       </Palettes>
     </Style>
   </Styles>
-  <View id="root" resizable="1" resize-corner="1" background-color="FF00FF0D"
+  <View id="root" resizable="0" resize-corner="1" background-color="FF00FF0D"
         border-color="" aspect="" tooltip-background="FFC92323" class="nomargin"
         lookAndFeel="LookAndFeel_V1" background-alpha="0" caption-placement="centred"
-        background-image="space_jpg">
+        background-image="space_jpg" height="500" width="800">
     <View background-color="00000000" border-color="FF000000" class="nomargin"
           pos-x="0%" pos-y="0%" pos-width="100%" pos-height="100%" background-image="space_jpg">
-      <Plot source="compressionValue"/>
       <View id="plot-view" class="plot-view" background-color="00000000"
             margin="50">
-        <Plot source="thresholdLine" caption="Threashold" caption-color="FFFFFFFF"
+        <Plot source="compressionValue" border-color="00000000" background-color="00000000"
+              plot-color="FF9A71C7"/>
+        <Plot source="thresholdLine" caption="Threshold" caption-color="FFFFFFFF"
               background-color="008B3030" lookAndFeel="FoleysFinest" plot-fill-color="00FFFFFF"
               plot-color="B6FFFFFF" class="nomargin"/>
-        <Plot source="output" class="transparent" plot-color="blue" margin="10"/>
-        <Plot source="input" class="transparent" plot-color="orange" margin="10 "/>
+        <Plot source="input" class="transparent" plot-color="FF00D2FF" margin="10 "
+              plot-fill-color="5853AAB7"/>
+        <Plot source="output" class="transparent" plot-color="FFD572FF" margin="10"
+              plot-fill-color="75D252D6"/>
       </View>
       <View class="parameters nomargin" flex-direction="column" background-color="00000000"
             margin="20">
@@ -49,7 +52,10 @@
           <Slider caption="Ratio" parameter="ratio" class="transparent" lookAndFeel="slide"/>
         </View>
         <View class="transparent">
-          <Slider caption="Threshold" parameter="threshold" class="transparent"/>
+          <View margin="0 100 0 100" display="contents" class="group nomargin transparent">
+            <Slider caption="Threshold" parameter="threshold" class="transparent"
+                    lookAndFeel="slide"/>
+          </View>
         </View>
       </View>
     </View>

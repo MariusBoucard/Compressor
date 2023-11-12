@@ -32,7 +32,7 @@ public:
 
 
     float calcHeight(juce::Rectangle<float> bounds){
-        auto lineHeight = bounds.getHeight()*compresisonValue;
+        auto lineHeight = bounds.getHeight()*compresisonValue+20;
         return lineHeight;
         
     }

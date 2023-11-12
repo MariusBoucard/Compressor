@@ -230,6 +230,7 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         }
     }
     inputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
+
 analyser->pushSamples (buffer);
 lineSource->pushSamples(buffer);
 compressionValue->pushSamples(buffer);
@@ -244,7 +245,21 @@ compressionValue->pushSamples(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
     compressor.process(context);
     lineSource->setYPosition(compressorParameters.threshold/(-40.0f));
-    compressionValue->setCompressionValue(10);
+
+    sum = 0.0f;
+        for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    {
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            sum += std::pow(buffer.getSample(channel, sample), 2);
+        }
+    }
+
+    auto outputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
+    float gainReduction = 10.0f * std::log10(inputVolume / outputVolume);
+
+    // Have to compute compressionValue
+    compressionValue->setCompressionValue(inputVolume - outputVolume);
     compressionValue->pushSamples(buffer);
    analyserOutput->pushSamples (buffer);
 
