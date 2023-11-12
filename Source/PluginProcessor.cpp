@@ -9,6 +9,7 @@
 #include "PluginEditor.h"
 #include "resources/LookAndFeel.h"
 #include "resources/MyCompressorVisualizer.h"
+#include "resources/RootLookAndFeel.h"
 //==============================================================================
 
 juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
@@ -36,6 +37,7 @@ CompressorAudioProcessor::CompressorAudioProcessor()
 #endif
  ,parameters(*this, nullptr, juce::Identifier("Compressor"),createParameterLayout()) {
     FOLEYS_SET_SOURCE_PATH(__FILE__);
+    FOLEYS_ENABLE_BINARY_DATA;
 
     auto file = juce::File::getSpecialLocation (juce::File::currentApplicationFile)
         .getChildFile ("Contents")
@@ -47,6 +49,10 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     else
         magicState.setGuiValueTree (BinaryData::magictest_xml, BinaryData::magictest_xmlSize);
 
+
+    const char* imageData = BinaryData::galaxy_png;
+    int imageSize = BinaryData::galaxy_pngSize;
+    juce::Image myBackgroundImage = juce::ImageCache::getFromMemory(imageData, imageSize);
 /*
 Possibilité de créer des objets custom
 
@@ -69,7 +75,6 @@ analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
 
     magicState.setPlayheadUpdateFrequency (30);
 
-    FOLEYS_ENABLE_BINARY_DATA;
 
     compressorParameters.attack = 0.95f;
     compressorParameters.release = 0.5f;
@@ -92,6 +97,8 @@ void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder& builde
     // std::unique_ptr<juce::LookAndFeel> lookAndFeel = std::make_unique<juce::LookAndFeel>(LookAndFeel());
 
    builder.registerLookAndFeel("slide", std::make_unique<LookAndFeel>());
+      builder.registerLookAndFeel("root", std::make_unique<RootLookAndFeel>());
+
 }
 
 //==============================================================================

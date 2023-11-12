@@ -16,6 +16,8 @@
         <FILE id="hhoTwm" name="magictest.xml" compile="0" resource="1" file="Source/resources/magictest.xml"/>
         <FILE id="fZSpcw" name="MyCompressorVisualizer.h" compile="0" resource="0"
               file="Source/resources/MyCompressorVisualizer.h"/>
+        <FILE id="KpVtqi" name="RootLookAndFeel.h" compile="0" resource="0"
+              file="Source/resources/RootLookAndFeel.h"/>
         <FILE id="a51O7V" name="scale.png" compile="0" resource="1" file="Source/resources/scale.png"/>
         <FILE id="BuWT1e" name="test.xml" compile="0" resource="1" file="Source/resources/test.xml"/>
         <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
