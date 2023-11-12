@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-//==============================================================================
+//===============================================P===============================
 /*
 */
 class RootLookAndFeel  : public juce::LookAndFeel_V3
@@ -20,6 +20,10 @@ class RootLookAndFeel  : public juce::LookAndFeel_V3
 public:
   RootLookAndFeel()
   {
+        const char* imageData = BinaryData::space_jpg;
+    int imageSize = BinaryData::space_jpgSize;
+    juce::Image myBackgroundImage = juce::ImageCache::getFromMemory(imageData, imageSize);
+    
     setColour(juce::Slider::backgroundColourId, juce::Colour::fromRGB(0, 0, 0));
     // Set the background color of the root element to black
   }

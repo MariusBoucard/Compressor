@@ -39,6 +39,10 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     FOLEYS_SET_SOURCE_PATH(__FILE__);
     FOLEYS_ENABLE_BINARY_DATA;
 
+    const char* imageData = BinaryData::galaxy_png;
+    int imageSize = BinaryData::galaxy_pngSize;
+    juce::Image myBackgroundImage = juce::ImageCache::getFromMemory(imageData, imageSize);
+    
     auto file = juce::File::getSpecialLocation (juce::File::currentApplicationFile)
         .getChildFile ("Contents")
         .getChildFile ("resources")
@@ -50,9 +54,7 @@ CompressorAudioProcessor::CompressorAudioProcessor()
         magicState.setGuiValueTree (BinaryData::magictest_xml, BinaryData::magictest_xmlSize);
 
 
-    const char* imageData = BinaryData::galaxy_png;
-    int imageSize = BinaryData::galaxy_pngSize;
-    juce::Image myBackgroundImage = juce::ImageCache::getFromMemory(imageData, imageSize);
+
 /*
 Possibilité de créer des objets custom
 

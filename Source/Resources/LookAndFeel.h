@@ -3,9 +3,19 @@ class LookAndFeel  : public juce::LookAndFeel_V4
 public:
   LookAndFeel()
   {
+          const char* imageData = BinaryData::space_jpg;
+    int imageSize = BinaryData::space_jpgSize;
+    juce::Image myBackgroundImage = juce::ImageCache::getFromMemory(imageData, imageSize);
+    
     // Constructor
   }
+
   
+    // void drawPropertyComponentBackground (juce::Graphics& g, juce::Component& component) override
+    // {
+    //     // Draw the image as the background of the component
+    //     g.drawImageAt(backgroundImage, 0, 0);
+    // }
   void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
              float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
   {
@@ -96,5 +106,7 @@ public:
   }
 
 private:
+    juce::Image backgroundImage;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
 };
