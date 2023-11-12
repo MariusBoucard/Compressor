@@ -12,14 +12,20 @@ public:
 
     // void pushSamples (const juce::AudioBuffer<float>& buffer)   override{} ;
 
+    float calcHeight(juce::Rectangle<float> bounds){
+        auto lineHeight = bounds.getHeight()*yPosition;
+        return lineHeight;
+        
+    }
     void createPlotPaths (juce::Path& path, juce::Path& filledPath, juce::Rectangle<float> bounds, foleys::MagicPlotComponent&) override
     {
         path.clear();
-        path.startNewSubPath(bounds.getX(), bounds.getCentreY() -yPosition);
-        path.lineTo(bounds.getRight(), bounds.getCentreY()-yPosition);
-        filledPath = path;
-          filledPath.lineTo (bounds.getBottomRight());
-    filledPath.lineTo (bounds.getBottomLeft());
+
+        path.startNewSubPath(bounds.getX(), (calcHeight(bounds)));
+        path.lineTo(bounds.getRight(), (calcHeight(bounds)));
+    //     filledPath = path;
+    //       filledPath.lineTo (bounds.getBottomRight());
+    // filledPath.lineTo (bounds.getBottomLeft());
     filledPath.closeSubPath();
 
     }
