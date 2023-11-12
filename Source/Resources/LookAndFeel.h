@@ -15,7 +15,7 @@
 //==============================================================================
 /*
 */
-class LookAndFeel  : public juce::LookAndFeel_V3
+class LookAndFeel  : public juce::LookAndFeel_V4
 {
 public:
     LookAndFeel()
@@ -28,41 +28,86 @@ public:
                          float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
     {
      
-        // Calculate the angle for the slider position within the full angle range
-        float angle = 1.5f * juce::MathConstants<float>::pi + rotaryStartAngle + (rotaryEndAngle - rotaryStartAngle) * sliderPos;
+        // // Calculate the angle for the slider position within the full angle range
+        // float angle = 1.5f * juce::MathConstants<float>::pi + rotaryStartAngle + (rotaryEndAngle - rotaryStartAngle) * sliderPos;
 
-        // Calculate the knob's position
-        float centerX = x + width / 2;
-        float centerY = y + height / 2;
-        float knobX = centerX + (width / 2 - 10) * std::cos(angle);
-        float knobY = centerY + (height / 2 - 10) * std::sin(angle);
+        // // Calculate the knob's position
+        // float centerX = x + width / 2;
+        // float centerY = y + height / 2;
+        // float knobX = centerX + (width / 2 - 10) * std::cos(angle);
+        // float knobY = centerY + (height / 2 - 10) * std::sin(angle);
 
-        // Set the colors for the knob and background
-        juce::Colour knobColor = juce::Colours::red;
-        juce::Colour backgroundColor = juce::Colours::darkgrey;
-        juce::Colour insideCircleColor = juce::Colours::black;
+        // // Set the colors for the knob and background
+        // juce::Colour knobColor = juce::Colours::red;
+        // juce::Colour backgroundColor = juce::Colours::darkgrey;
+        // juce::Colour insideCircleColor = juce::Colours::black;
 
         
-        // Draw the background
-        g.setColour(backgroundColor);
-        g.fillEllipse(x, y, width, height);
+        // // Draw the background
+        // g.setColour(backgroundColor);
+        // g.fillEllipse(x, y, width, height);
         
-        g.setColour(insideCircleColor);
-        g.fillRect(centerX-120, centerY, 250.0, 100.0);
+        // g.setColour(insideCircleColor);
+        // g.fillRect(centerX-120, centerY, 250.0, 100.0);
         
-        g.setColour(insideCircleColor);
-        g.fillEllipse(x+10,y+10, width-20, height-20);
+        // g.setColour(insideCircleColor);
+        // g.fillEllipse(x+10,y+10, width-20, height-20);
         
         
+        // // Draw the knob as a filled circle
+        // g.setColour(knobColor);
+        // g.fillEllipse(knobX - 10, knobY - 10, 20, 20);
+        //  const char* imageGalaxyData = BinaryData::galaxy_png;
+        // int imageGalaxySize = BinaryData::galaxy_pngSize;
+        // juce::Image galaxyImage = juce::ImageCache::getFromMemory(imageGalaxyData, imageGalaxySize);
+        //         g.drawImage(galaxyImage, x, y, width, height,0,0, galaxyImage.getWidth(), galaxyImage.getHeight());
+
+        //  g.drawImage(backgroundImage, x, y, width, height, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
+          auto radius = width/2.0f-10.0f;
         // Draw the knob as a filled circle
-        g.setColour(knobColor);
-        g.fillEllipse(knobX - 10, knobY - 10, 20, 20);
-         const char* imageGalaxyData = BinaryData::galaxy_png;
-        int imageGalaxySize = BinaryData::galaxy_pngSize;
-        juce::Image galaxyImage = juce::ImageCache::getFromMemory(imageGalaxyData, imageGalaxySize);
-                g.drawImage(galaxyImage, x, y, width, height,0,0, galaxyImage.getWidth(), galaxyImage.getHeight());
+        auto centreX = x + width  * 0.5f;
+        auto centreY = y + height * 0.5f;
+        auto rx = centreX - radius;
+        auto ry = centreY - radius;
+        auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
-        
+        auto outlineThickness = radius * 0.3f;
+        // fill
+        g.setColour(juce::Colours::lightcyan);
+        g.fillEllipse(rx, ry, radius * 2.0f, radius * 2.0f);
+
+        // outline
+        g.setColour(juce::Colours::chocolate);
+        g.drawEllipse(rx, ry, radius * 2.0f, radius * 2.0f, outlineThickness);
+
+        // Draw lines on the ellipse, splitting it into 6 parts
+        g.setColour(juce::Colours::black);
+        auto littleLineThickness = outlineThickness * 0.1f;
+        auto nbSplit = 8;
+        for (int i = 0; i <= nbSplit; ++i) {
+          auto angle =  i * (rotaryEndAngle - rotaryStartAngle) / nbSplit + rotaryStartAngle - juce::MathConstants<float>::halfPi;
+          auto x1 = centreX + (radius + outlineThickness/2.0f) * std::cos(angle);
+          auto y1 = (centreY + (radius  + outlineThickness/2.0f) * std::sin(angle));
+          auto x2 = centreX + (radius - outlineThickness/2.0f ) * std::cos(angle);
+          auto y2 = (centreY + (radius - outlineThickness/2.0f) * std::sin(angle));
+          g.drawLine(x1, y1, x2, y2, littleLineThickness);
+        }
+       
+        juce::Path p;
+        auto halfThickness = outlineThickness * 0.5f;
+        p.addTriangle(0.0f ,
+                       -(radius+0.5f*outlineThickness),
+                      halfThickness,
+                      -(radius-halfThickness),
+                      -halfThickness,
+                     -(radius-halfThickness));
+                                       
+        // p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
+        p.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
+
+        // pointer
+        g.setColour(juce::Colours::black);
+        g.fillPath(p);
         // const char* imageData = BinaryData::lilwaynehead_png;
         // int imageSize = BinaryData::lilwaynehead_pngSize;
         // juce::Image myKnobImage = juce::ImageCache::getFromMemory(imageData, imageSize);
