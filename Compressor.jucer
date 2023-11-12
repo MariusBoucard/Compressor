@@ -5,6 +5,7 @@
   <MAINGROUP id="oXUuYS" name="Compressor">
     <GROUP id="{DD661678-B72A-E686-D3DB-3AABD9675267}" name="Source">
       <GROUP id="{559436F1-1671-1E40-B396-EEBD0C13A0EE}" name="resources">
+        <FILE id="NckEgB" name="galaxy.png" compile="0" resource="1" file="Source/resources/galaxy.png"/>
         <FILE id="PVvOqt" name="HorizontalLineSource.h" compile="0" resource="0"
               file="Source/resources/HorizontalLineSource.h"/>
         <FILE id="egBNnd" name="InputVolumeDisplay.h" compile="0" resource="0"
@@ -13,6 +14,9 @@
         <FILE id="TC9JHa" name="lookNFeel.h" compile="0" resource="0" file="Source/resources/lookNFeel.h"/>
         <FILE id="KzOh7D" name="magic.xml" compile="0" resource="1" file="Source/resources/magic.xml"/>
         <FILE id="hhoTwm" name="magictest.xml" compile="0" resource="1" file="Source/resources/magictest.xml"/>
+        <FILE id="fZSpcw" name="MyCompressorVisualizer.h" compile="0" resource="0"
+              file="Source/resources/MyCompressorVisualizer.h"/>
+        <FILE id="a51O7V" name="scale.png" compile="0" resource="1" file="Source/resources/scale.png"/>
         <FILE id="BuWT1e" name="test.xml" compile="0" resource="1" file="Source/resources/test.xml"/>
         <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
               file="Source/resources/ThreasholdLineSource.h"/>

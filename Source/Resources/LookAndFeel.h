@@ -27,6 +27,7 @@ public:
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
                          float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
     {
+     
         // Calculate the angle for the slider position within the full angle range
         float angle = 1.5f * juce::MathConstants<float>::pi + rotaryStartAngle + (rotaryEndAngle - rotaryStartAngle) * sliderPos;
 
@@ -56,7 +57,11 @@ public:
         // Draw the knob as a filled circle
         g.setColour(knobColor);
         g.fillEllipse(knobX - 10, knobY - 10, 20, 20);
-        
+         const char* imageGalaxyData = BinaryData::galaxy_png;
+        int imageGalaxySize = BinaryData::galaxy_pngSize;
+        juce::Image galaxyImage = juce::ImageCache::getFromMemory(imageGalaxyData, imageGalaxySize);
+                g.drawImage(galaxyImage, x, y, width, height,0,0, galaxyImage.getWidth(), galaxyImage.getHeight());
+
         
         // const char* imageData = BinaryData::lilwaynehead_png;
         // int imageSize = BinaryData::lilwaynehead_pngSize;

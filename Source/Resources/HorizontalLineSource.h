@@ -1,4 +1,10 @@
 #include <JuceHeader.h>
+#ifndef HORIZONTAL_LINE_SOURCE_H
+#define HORIZONTAL_LINE_SOURCE_H
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "foleys_gui_magic/foleys_gui_magic.h"
+
 
 
 class HorizontalLineSource : public foleys::MagicAnalyser
@@ -82,3 +88,4 @@ private:
     bool active = true;
 
 };
+#endif // HORIZONTAL_LINE_SOURCE_H
