@@ -9,6 +9,7 @@
 
 #include <JuceHeader.h>
 #include "resources/HorizontalLineSource.h"
+#include "resources/CompressionValue.h"
 // #include "ThreasholdLineSource.h"
 //==============================================================================
 /**
@@ -78,6 +79,7 @@ private:
         foleys::MagicPlotSource* analyser = nullptr;
         foleys::MagicPlotSource* analyserOutput = nullptr;
         HorizontalLineSource* lineSource = nullptr;
+        CompressionValue* compressionValue = nullptr;
       // foleys::MagicProcessorState magicState { *this };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorAudioProcessor)

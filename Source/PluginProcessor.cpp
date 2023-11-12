@@ -10,6 +10,7 @@
 #include "resources/LookAndFeel.h"
 #include "resources/MyCompressorVisualizer.h"
 #include "resources/RootLookAndFeel.h"
+#include "resources/CompressionValue.h"
 //==============================================================================
 
 juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
@@ -71,6 +72,7 @@ analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
 analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
 
     lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
+    compressionValue = magicState.createAndAddObject<CompressionValue>("compressionValue");
 
 //  compressorVisualizer = magicState.createAndAddObject<MyCompressorVisualizer>("thresholdLineBis");
 // Add a threshold line at -20 dBFS
@@ -176,6 +178,7 @@ void CompressorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 analyser->prepareToPlay (sampleRate, samplesPerBlock);
 analyserOutput->prepareToPlay (sampleRate, samplesPerBlock);
 lineSource->prepareToPlay (sampleRate, samplesPerBlock);
+compressionValue->prepareToPlay (sampleRate, samplesPerBlock);
 
     compressor.prepare(spec);
     // Use this method as the place to do any pre-playback
@@ -231,6 +234,7 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     inputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
 analyser->pushSamples (buffer);
 lineSource->pushSamples(buffer);
+compressionValue->pushSamples(buffer);
     std::cout << "Hello, world!" << std::endl;
 
     juce::ScopedNoDenormals noDenormals;
