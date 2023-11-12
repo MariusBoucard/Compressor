@@ -9,7 +9,6 @@
 #include "PluginEditor.h"
 #include "resources/LookAndFeel.h"
 #include "resources/MyCompressorVisualizer.h"
-#include "resources/RootLookAndFeel.h"
 #include "resources/CompressionValue.h"
 //==============================================================================
 
@@ -101,7 +100,6 @@ void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder& builde
     // std::unique_ptr<juce::LookAndFeel> lookAndFeel = std::make_unique<juce::LookAndFeel>(LookAndFeel());
 
    builder.registerLookAndFeel("slide", std::make_unique<LookAndFeel>());
-      builder.registerLookAndFeel("root", std::make_unique<RootLookAndFeel>());
 
 }
 
@@ -246,6 +244,8 @@ compressionValue->pushSamples(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
     compressor.process(context);
     lineSource->setYPosition(compressorParameters.threshold/(-40.0f));
+    compressionValue->setCompressionValue(10);
+    compressionValue->pushSamples(buffer);
    analyserOutput->pushSamples (buffer);
 
 }

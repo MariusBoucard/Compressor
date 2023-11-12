@@ -10,8 +10,7 @@
 class CompressionValue : public foleys::MagicAnalyser
 {
 public:
-    float yPosition = 0.0f;
-    CompressionValue() : yPosition(0.0f) {}
+    CompressionValue()  {};
     ~CompressionValue() override{} ;
     // TODO MAKE WAY TO MUCH CALCULATION
     // void prepareToPlay (double sampleRate, int samplesPerBlockExpected) override{} ;
@@ -33,7 +32,7 @@ public:
 
 
     float calcHeight(juce::Rectangle<float> bounds){
-        auto lineHeight = bounds.getHeight()*volumeInput;
+        auto lineHeight = bounds.getHeight()*compresisonValue;
         return lineHeight;
         
     }
@@ -78,9 +77,9 @@ public:
 
     }
 
-    void setYPosition(float newPosition)
+    void setCompressionValue(float newPosition)
     {
-        yPosition = newPosition;
+        compresisonValue = newPosition;
   
     }
 
@@ -92,7 +91,7 @@ public:
     void resetLastDataFlag() { ; }
 private:
     bool active = true;
-    float volumeInput = 0.0f;
+    float compresisonValue = 0.0f;
     // JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressionValue);
 };
 #endif // HORIZONTAL_LINE_SOURCE_H
