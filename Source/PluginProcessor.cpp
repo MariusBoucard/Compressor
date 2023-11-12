@@ -75,7 +75,11 @@ analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
 // auto threshold = magicState.createAndAddObject<foleys::AtomicValueAttachment>("waveform");
 
 // auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
+    // lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
+    // Add a threshold line at -20 dBFS
     lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
+    // magicState.createAndAddObject<foleys::MagicPlotSource>("thresholdLine", thresholdValue);
+
 // Add a threshold line at -20 dBFS
 // magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
     magicState.setPlayheadUpdateFrequency (30);
@@ -185,6 +189,7 @@ void CompressorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     spec.numChannels = static_cast<juce::uint32> (getTotalNumOutputChannels());
 analyser->prepareToPlay (sampleRate, samplesPerBlock);
 analyserOutput->prepareToPlay (sampleRate, samplesPerBlock);
+lineSource->prepareToPlay (sampleRate, samplesPerBlock);
 
     compressor.prepare(spec);
     // Use this method as the place to do any pre-playback
@@ -239,7 +244,7 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     }
     inputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
 analyser->pushSamples (buffer);
-
+lineSource->pushSamples(buffer);
     std::cout << "Hello, world!" << std::endl;
 
     juce::ScopedNoDenormals noDenormals;
@@ -260,7 +265,7 @@ void CompressorAudioProcessor::updateCompressorParameters() {
     compressorParameters.attack = *parameters.getRawParameterValue("attack")*0.01f;
     compressorParameters.release = *parameters.getRawParameterValue("release");
     compressorParameters.ratio = *parameters.getRawParameterValue("ratio") ;
-    *parameters.getRawParameterValue("inputVolume") = compressorParameters.ratio;
+    // *parameters.getRawParameterValue("inputVolume") = compressorParameters.ratio;
 
     // Debug output
     std::cout << "Threshold: " << compressorParameters.threshold << std::endl;
@@ -271,7 +276,7 @@ void CompressorAudioProcessor::updateCompressorParameters() {
     compressor.setRelease(compressorParameters.release);
     compressor.setRatio(compressorParameters.ratio);
        compressor.setThreshold(compressorParameters.threshold);
-       lineSource->setYPosition(0.5f);  // Set the line to the middle of the plot
+    //    lineSource->setYPosition(0.5f);  // Set the line to the middle of the plot
 }
 
 //SUPPR HASEDITORS
