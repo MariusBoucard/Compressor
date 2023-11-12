@@ -1,7 +1,9 @@
-class LookAndFeel  : public juce::LookAndFeel_V4
+#include <juce_gui_basics/juce_gui_basics.h>
+
+class LookAndFeelThreshold  : public juce::LookAndFeel_V4
 {
 public:
-  LookAndFeel()
+  LookAndFeelThreshold()
   {
  
     
@@ -31,6 +33,20 @@ public:
 
     g.setColour (juce::Colours::grey);
     g.strokePath (backgroundArc, juce::PathStrokeType (lineW, juce::PathStrokeType::curved, juce::PathStrokeType::butt));
+
+juce::Path volumePath;
+volumePath.addCentredArc(
+  centreX,
+  centreY,arcRadius,
+  arcRadius,
+  0.0f,
+  rotaryStartAngle,
+  endAngle,
+  true);
+          g.setColour(juce::Colours::red);
+        g.strokePath(volumePath, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::butt));
+
+
 
  juce::Path overlay;
     overlay.addCentredArc (centreX,
@@ -96,9 +112,15 @@ public:
     // Draw the line that fills up the knob based on the slider value
 
   }
+      void setEndAngle(float newEndAngle)
+    {
+        endAngle = newEndAngle;
+    }
+
 
 private:
+float endAngle = 90.0f;
     juce::Image backgroundImage;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeelThreshold)
 };

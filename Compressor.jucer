@@ -8,15 +8,10 @@
       <GROUP id="{559436F1-1671-1E40-B396-EEBD0C13A0EE}" name="resources">
         <FILE id="jfQvQ9" name="CompressionValue.h" compile="0" resource="0"
               file="Source/resources/CompressionValue.h"/>
-        <FILE id="NckEgB" name="galaxy.png" compile="0" resource="1" file="Source/resources/galaxy.png"/>
         <FILE id="PVvOqt" name="HorizontalLineSource.h" compile="0" resource="0"
               file="Source/resources/HorizontalLineSource.h"/>
-        <FILE id="egBNnd" name="InputVolumeDisplay.h" compile="0" resource="0"
-              file="Source/resources/InputVolumeDisplay.h"/>
         <FILE id="s9PErm" name="LookAndFeel.h" compile="0" resource="0" file="Source/resources/LookAndFeel.h"/>
         <FILE id="hhoTwm" name="magictest.xml" compile="0" resource="1" file="Source/resources/magictest.xml"/>
-        <FILE id="fZSpcw" name="MyCompressorVisualizer.h" compile="0" resource="0"
-              file="Source/resources/MyCompressorVisualizer.h"/>
         <FILE id="lbO8Tr" name="space.jpg" compile="0" resource="1" file="Source/resources/space.jpg"/>
         <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
               file="Source/resources/ThreasholdLineSource.h"/>

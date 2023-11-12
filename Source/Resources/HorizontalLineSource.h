@@ -52,10 +52,6 @@ public:
 
         path.startNewSubPath(bounds.getX(), (calcHeight(bounds)));
         path.lineTo(bounds.getRight(), (calcHeight(bounds)));
-        // To fill under the line, you can use the following code:
-        //     filledPath = path;
-        //       filledPath.lineTo (bounds.getBottomRight());
-        // filledPath.lineTo (bounds.getBottomLeft());
 
         path.closeSubPath();
         createScale(path, bounds);

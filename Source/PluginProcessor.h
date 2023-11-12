@@ -51,7 +51,7 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
     void updateCompressorParameters();
-
+    void updateVolumeAngle(float inputVolume);
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
@@ -70,6 +70,8 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     float getInputVolume() const { return inputVolume; }
 
             // foleys::MagicProcessorState& getMagicState() { return magicState; }
+                juce::Slider* thresholdSlider = nullptr;
+
 private:
         float inputVolume = 0.0f;
    // void initialiseBuilder(foleys::MagicGUIBuilder& builder);
