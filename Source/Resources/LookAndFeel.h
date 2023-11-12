@@ -28,41 +28,7 @@ public:
                          float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
     {
      
-        // // Calculate the angle for the slider position within the full angle range
-        // float angle = 1.5f * juce::MathConstants<float>::pi + rotaryStartAngle + (rotaryEndAngle - rotaryStartAngle) * sliderPos;
 
-        // // Calculate the knob's position
-        // float centerX = x + width / 2;
-        // float centerY = y + height / 2;
-        // float knobX = centerX + (width / 2 - 10) * std::cos(angle);
-        // float knobY = centerY + (height / 2 - 10) * std::sin(angle);
-
-        // // Set the colors for the knob and background
-        // juce::Colour knobColor = juce::Colours::red;
-        // juce::Colour backgroundColor = juce::Colours::darkgrey;
-        // juce::Colour insideCircleColor = juce::Colours::black;
-
-        
-        // // Draw the background
-        // g.setColour(backgroundColor);
-        // g.fillEllipse(x, y, width, height);
-        
-        // g.setColour(insideCircleColor);
-        // g.fillRect(centerX-120, centerY, 250.0, 100.0);
-        
-        // g.setColour(insideCircleColor);
-        // g.fillEllipse(x+10,y+10, width-20, height-20);
-        
-        
-        // // Draw the knob as a filled circle
-        // g.setColour(knobColor);
-        // g.fillEllipse(knobX - 10, knobY - 10, 20, 20);
-        //  const char* imageGalaxyData = BinaryData::galaxy_png;
-        // int imageGalaxySize = BinaryData::galaxy_pngSize;
-        // juce::Image galaxyImage = juce::ImageCache::getFromMemory(imageGalaxyData, imageGalaxySize);
-        //         g.drawImage(galaxyImage, x, y, width, height,0,0, galaxyImage.getWidth(), galaxyImage.getHeight());
-
-        //  g.drawImage(backgroundImage, x, y, width, height, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
           auto radius = width/2.0f-10.0f;
         // Draw the knob as a filled circle
         auto centreX = x + width  * 0.5f;
@@ -73,11 +39,12 @@ public:
 
         auto outlineThickness = radius * 0.3f;
         // fill
-        g.setColour(juce::Colours::lightcyan);
+        juce::ColourGradient grad(juce::Colours::lightcyan, 0.0f, 0.0f, juce::Colours::darkcyan, radius * 2.0f, radius * 2.0f, true);
+        g.setGradientFill(grad);
         g.fillEllipse(rx, ry, radius * 2.0f, radius * 2.0f);
-
         // outline
-        g.setColour(juce::Colours::chocolate);
+                juce::ColourGradient gradient(juce::Colours::orchid, 0.0f, 0.0f, juce::Colours::darkorchid, radius * 2.0f, radius * 2.0f, true);
+        g.setGradientFill(gradient);
         g.drawEllipse(rx, ry, radius * 2.0f, radius * 2.0f, outlineThickness);
 
         // Draw lines on the ellipse, splitting it into 6 parts
@@ -102,19 +69,38 @@ public:
                       -halfThickness,
                      -(radius-halfThickness));
                                        
-        // p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
         p.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
 
         // pointer
         g.setColour(juce::Colours::black);
         g.fillPath(p);
+         g.setColour(juce::Colours::white);
+        g.setFont(10.0f);
+        // Create the string with two decimal places and the unit "ms"
+        juce::String sliderPosString = juce::String::formatted("%.2f ms", sliderPos);
+
+        slider.setTextValueSuffix(" ms");
+        // g.drawFittedText(sliderPosString, 0,-10, 100, 50, juce::Justification::centred, 1);
+
         // const char* imageData = BinaryData::lilwaynehead_png;
         // int imageSize = BinaryData::lilwaynehead_pngSize;
         // juce::Image myKnobImage = juce::ImageCache::getFromMemory(imageData, imageSize);
         
         // g.drawImage(myKnobImage, knobX-30, knobY-30, 50, 50, 0, 0, myKnobImage.getWidth(), myKnobImage.getHeight());
         
-       
+        
+// void drawLabel (juce::Graphics& g, juce::Label& label) 
+// {
+//   // Call the base class implementation first
+//   LookAndFeel::drawLabel (g, label);
+
+//   // Customize the label's appearance
+//   g.setColour (juce::Colours::white);
+//   g.setFont (150.0f);
+
+//   // Draw the label's text
+//   g.drawFittedText (label.getText(), label.getLocalBounds(), juce::Justification::centred, 1);
+// }
        
         
     }
