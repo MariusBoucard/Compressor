@@ -54,7 +54,7 @@
         <View class="transparent">
           <View margin="0 100 0 100" display="contents" class="group nomargin transparent">
             <Slider caption="Threshold" parameter="threshold" class="transparent"
-                    lookAndFeel="slide"/>
+                    lookAndFeel="slide" id="thresholdSlider"/>
           </View>
         </View>
       </View>

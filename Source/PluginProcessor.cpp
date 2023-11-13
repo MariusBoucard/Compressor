@@ -9,7 +9,6 @@
 #include "PluginEditor.h"
 #include "resources/LookAndFeel.h"
 #include "resources/LookAndFeelThreshold.h"
-
 #include "resources/CompressionValue.h"
 //==============================================================================
 
@@ -42,7 +41,7 @@ CompressorAudioProcessor::CompressorAudioProcessor()
     FOLEYS_SET_SOURCE_PATH(__FILE__);
     FOLEYS_ENABLE_BINARY_DATA;
 
-
+    std::cout << "TA MEREEEEE"<<std::endl;
 
     auto file = juce::File::getSpecialLocation(juce::File::currentApplicationFile)
                     .getChildFile("Contents")
@@ -53,7 +52,21 @@ CompressorAudioProcessor::CompressorAudioProcessor()
         magicState.setGuiValueTree(file);
     else
         magicState.setGuiValueTree(BinaryData::magictest_xml, BinaryData::magictest_xmlSize);
+      
+    thresholdSlider = magicState.getObjectWithType<juce::Slider>("thresholdSlider");
+    if (thresholdSlider != nullptr)
+    {
+        // Successfully retrieved the slider object
+        // Print the pointer value to the console
+        std::cout << "Slider pointer: " << thresholdSlider << std::endl;
+    }
+    else
+    {
+                std::cout<< "Cannot get the slider pointer"<<std::endl;
 
+        // Failed to retrieve the slider object
+        // Handle the error here
+    }
     /*
     Possibilité de créer des objets custom
 
@@ -216,13 +229,11 @@ float volumeBuffer(juce::AudioBuffer<float> &buffer){
 }
 void CompressorAudioProcessor::updateVolumeAngle(float inputVolume){
     // TODO
-    juce::Slider* slider = dynamic_cast<juce::Slider*>(getParameters().getFirst());
 
-    // LookAndFeelThreshold* lookAndFeel = dynamic_cast<LookAndFeelThreshold*>(slider->getLookAndFeel());
-    // if (lookAndFeel != nullptr)
-    // {
-    //     lookAndFeel->setEndAngle(inputVolume);
-    // }
+//this one prevent everything to work
+    //  thresholdSlider->setValue(-10);
+    // LookAndFeelThreshold& lookAndFeel = dynamic_cast<LookAndFeelThreshold&>(thresholdSlider->getLookAndFeel());
+    //lookAndFeel.setEndAngle(inputVolume);
 }
 
 void CompressorAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages)
