@@ -7,69 +7,91 @@
 */
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "LookAndFeel.h"
+#include "resources/LookAndFeel.h"
+#include "resources/LookAndFeelThreshold.h"
 
+#include "resources/CompressionValue.h"
 //==============================================================================
+
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+{
+
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    // layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"inputVolume", 1}, "Input Volume", 0.0f, 100.0f, 50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"threshold", 1}, "Threshold", -40.0f, 0.0f, 0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"attack", 1}, "Attack", 0.0f, 100.0f, 50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"release", 1}, "Release", 0.0f, 100.0f, 50.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"ratio", 1}, "Ratio", 0.0f, 100.0f, 50.0f));
+    return layout;
+}
+
 CompressorAudioProcessor::CompressorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : foleys::MagicProcessor(BusesProperties()
-#if ! JucePlugin_IsMidiEffect
-#if ! JucePlugin_IsSynth
-         .withInput("Input", juce::AudioChannelSet::stereo(), true)
+    : foleys::MagicProcessor(BusesProperties()
+#if !JucePlugin_IsMidiEffect
+#if !JucePlugin_IsSynth
+                                 .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
-         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+                                 .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-     )
+                                 )
 #endif
- ,parameters(*this, nullptr, juce::Identifier("Compressor"),
-    {
- std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "inputVolume",  1 },"Input Volume",0.0f,100.0f,50.0),
-       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "threshold",  1 },"Threshold",-40.0f,0.0f,0.0f),
-       std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "attack",  1 },"Attack",0.0f,100.0f,50.0f),
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "release",  1 },"Release",0.0f,100.0f,50.0f),
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID { "ratio",  1 },"Ratio",0.0f,100.0f,50.0f)
-
-    }) {
-analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
-analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
-//  auto thresholdLineSource = std::make_unique<ThresholdLineSource>(-20.0f); // Replace -20.0f with your actual threshold value
-//     magicState.createAndAddObject<foleys::MagicPlotSource>("thresholdLine", std::move(thresholdLineSource));
-// // Add a threshold line at -20 dBFS
-
-magicState.createAndAddObject<foleys::MagicLevelSource>("inputVolume");
-
+      ,
+      parameters(*this, nullptr, juce::Identifier("Compressor"), createParameterLayout())
+{
     FOLEYS_SET_SOURCE_PATH(__FILE__);
     FOLEYS_ENABLE_BINARY_DATA;
 
-    compressorParameters.attack = 0.95f;
-    compressorParameters.release = 0.5f;
-    compressorParameters.ratio = 0.9f;
-    compressorParameters.threshold = 0.5f;
-    compressor.setAttack(0.95f);
-    compressor.setRelease(0.5f);   
-    compressor.setRatio(0.9f);
-    compressor.setThreshold(0.5f);
-    // Set the GUI file
-    // Load the XML file
-    juce::File file = juce::File::getCurrentWorkingDirectory().getChildFile("magic.xml");
-    std::unique_ptr<juce::XmlElement> xml = juce::parseXML(file);
 
-    // Convert the XML to a ValueTree
 
-    // magicState.setGuiValueTree(*xml);
+    auto file = juce::File::getSpecialLocation(juce::File::currentApplicationFile)
+                    .getChildFile("Contents")
+                    .getChildFile("resources")
+                    .getChildFile("magictest.xml");
+
+    if (file.existsAsFile())
+        magicState.setGuiValueTree(file);
+    else
+        magicState.setGuiValueTree(BinaryData::magictest_xml, BinaryData::magictest_xmlSize);
+
+    /*
+    Possibilité de créer des objets custom
+
+    magicState.registerObjectFactory("MyCustomObject", [](const juce::Identifier& type) {
+        return std::make_unique<MyCustomObject>();
+    });
+    auto myObject = magicState.createAndAddObject<MyCustomObject>("MyCustomObject");
+    */
+
+    /*
+    Ce sont des entrées qui sont envoyées en continue dans le plugin, sont elles mappées avec treeState ?
+    */
+    analyser = magicState.createAndAddObject<foleys::MagicAnalyser>("input");
+    analyserOutput = magicState.createAndAddObject<foleys::MagicAnalyser>("output");
+    lineSource = magicState.createAndAddObject<HorizontalLineSource>("thresholdLine");
+    compressionValue = magicState.createAndAddObject<CompressionValue>("compressionValue");
+
+    //  compressorVisualizer = magicState.createAndAddObject<MyCompressorVisualizer>("thresholdLineBis");
+    // Add a threshold line at -20 dBFS
+
+    magicState.setPlayheadUpdateFrequency(30);
+
+
 }
 
 CompressorAudioProcessor::~CompressorAudioProcessor()
 {
 }
-void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder& builder)
+void CompressorAudioProcessor::initialiseBuilder(foleys::MagicGUIBuilder &builder)
 {
-   builder.registerJUCEFactories();
-   builder.registerJUCELookAndFeels();
+    builder.registerJUCEFactories();
+    builder.registerJUCELookAndFeels();
 
     // std::unique_ptr<juce::LookAndFeel> lookAndFeel = std::make_unique<juce::LookAndFeel>(LookAndFeel());
 
-   builder.registerLookAndFeel("slide", std::make_unique<LookAndFeel>());
+    builder.registerLookAndFeel("slide", std::make_unique<LookAndFeel>());
+        builder.registerLookAndFeel("threshold", std::make_unique<LookAndFeelThreshold>());
+
 }
 
 //==============================================================================
@@ -80,29 +102,29 @@ const juce::String CompressorAudioProcessor::getName() const
 
 bool CompressorAudioProcessor::acceptsMidi() const
 {
-   #if JucePlugin_WantsMidiInput
+#if JucePlugin_WantsMidiInput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool CompressorAudioProcessor::producesMidi() const
 {
-   #if JucePlugin_ProducesMidiOutput
+#if JucePlugin_ProducesMidiOutput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool CompressorAudioProcessor::isMidiEffect() const
 {
-   #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 double CompressorAudioProcessor::getTailLengthSeconds() const
@@ -112,8 +134,8 @@ double CompressorAudioProcessor::getTailLengthSeconds() const
 
 int CompressorAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
+              // so this should be at least 1, even if you're not really implementing programs.
 }
 
 int CompressorAudioProcessor::getCurrentProgram()
@@ -121,74 +143,68 @@ int CompressorAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void CompressorAudioProcessor::setCurrentProgram (int index)
+void CompressorAudioProcessor::setCurrentProgram(int index)
 {
 }
 
-const juce::String CompressorAudioProcessor::getProgramName (int index)
+const juce::String CompressorAudioProcessor::getProgramName(int index)
 {
     return {};
 }
 
-void CompressorAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void CompressorAudioProcessor::changeProgramName(int index, const juce::String &newName)
 {
 }
 
 //==============================================================================
-void CompressorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void CompressorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-          juce::dsp::ProcessSpec spec;
+    juce::dsp::ProcessSpec spec;
 
-       spec.sampleRate = sampleRate;
-    spec.maximumBlockSize = static_cast<juce::uint32> (samplesPerBlock);
-    spec.numChannels = static_cast<juce::uint32> (getTotalNumOutputChannels());
-analyser->prepareToPlay (sampleRate, samplesPerBlock);
-analyserOutput->prepareToPlay (sampleRate, samplesPerBlock);
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = static_cast<juce::uint32>(samplesPerBlock);
+    spec.numChannels = static_cast<juce::uint32>(getTotalNumOutputChannels());
+
+    analyser->prepareToPlay(sampleRate, samplesPerBlock);
+    analyserOutput->prepareToPlay(sampleRate, samplesPerBlock);
+    lineSource->prepareToPlay(sampleRate, samplesPerBlock);
+    compressionValue->prepareToPlay(sampleRate, samplesPerBlock);
 
     compressor.prepare(spec);
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
 }
 
 void CompressorAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-
- 
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool CompressorAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool CompressorAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
+#if JucePlugin_IsMidiEffect
+    juce::ignoreUnused(layouts);
     return true;
-  #else
+#else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     // Some plugin hosts, such as certain GarageBand versions, will only
     // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono() && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
+        // This checks if the input layout matches the output layout
+#if !JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
-
-    return true;
-  #endif
-}
 #endif
 
-void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
-{
-
-    //Getting Volume :
-       float sum = 0.0f;
+    return true;
+#endif
+}
+#endif
+float volumeBuffer(juce::AudioBuffer<float> &buffer){
+   float sum = 0.0f;
     for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
     {
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
@@ -196,60 +212,83 @@ void CompressorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             sum += std::pow(buffer.getSample(channel, sample), 2);
         }
     }
-    inputVolume = std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
-analyser->pushSamples (buffer);
+    return std::sqrt(sum / (buffer.getNumChannels() * buffer.getNumSamples()));
+}
+void CompressorAudioProcessor::updateVolumeAngle(float inputVolume){
+    // TODO
+    juce::Slider* slider = dynamic_cast<juce::Slider*>(getParameters().getFirst());
 
-    std::cout << "Hello, world!" << std::endl;
+    // LookAndFeelThreshold* lookAndFeel = dynamic_cast<LookAndFeelThreshold*>(slider->getLookAndFeel());
+    // if (lookAndFeel != nullptr)
+    // {
+    //     lookAndFeel->setEndAngle(inputVolume);
+    // }
+}
+
+void CompressorAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages)
+{
+    inputVolume = volumeBuffer(buffer);
+    CompressorAudioProcessor::updateVolumeAngle(inputVolume);
+    analyser->pushSamples(buffer);
+    // On push les buffers, mais les trucs ne computent pas seuls ... 
+    lineSource->pushSamples(buffer);
+    compressionValue->pushSamples(buffer);
 
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+
     updateCompressorParameters();
 
     juce::dsp::AudioBlock<float> audioBlock(buffer);
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
     compressor.process(context);
-   analyserOutput->pushSamples (buffer);
+    lineSource->setYPosition(compressorParameters.threshold / (-40.0f));
 
+    
+
+    auto outputVolume = volumeBuffer(buffer);
+    float gainReduction = 10.0f * std::log10(inputVolume / outputVolume);
+
+    // Have to compute compressionValue
+    compressionValue->setCompressionValue(inputVolume-outputVolume);
+    compressionValue->pushSamples(buffer);
+    analyserOutput->pushSamples(buffer);
 }
 
-void CompressorAudioProcessor::updateCompressorParameters() {
-    compressorParameters.threshold = *parameters.getRawParameterValue("threshold") ;
-    compressorParameters.attack = *parameters.getRawParameterValue("attack")*0.01f;
+void CompressorAudioProcessor::updateCompressorParameters()
+{
+    compressorParameters.threshold = *parameters.getRawParameterValue("threshold");
+    compressorParameters.attack = *parameters.getRawParameterValue("attack") * 0.01f;
     compressorParameters.release = *parameters.getRawParameterValue("release");
-    compressorParameters.ratio = *parameters.getRawParameterValue("ratio") ;
-    *parameters.getRawParameterValue("inputVolume") = compressorParameters.ratio;
-
-    // Debug output
-    std::cout << "Threshold: " << compressorParameters.threshold << std::endl;
-    std::cout << "Attack: " << compressorParameters.attack << std::endl;
-    std::cout << "Release: " << compressorParameters.release << std::endl;
-    std::cout << "Ratio: " << compressorParameters.ratio << std::endl;
+    compressorParameters.ratio = *parameters.getRawParameterValue("ratio");
+    // *parameters.getRawParameterValue("inputVolume") = compressorParameters.ratio;
     compressor.setAttack(compressorParameters.attack);
     compressor.setRelease(compressorParameters.release);
     compressor.setRatio(compressorParameters.ratio);
-       compressor.setThreshold(compressorParameters.threshold);
+    compressor.setThreshold(compressorParameters.threshold);
+    //    lineSource->setYPosition(0.5f);  // Set the line to the middle of the plot
 }
 
-//SUPPR HASEDITORS
+// SUPPR HASEDITORS
 
 //
 
-juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
-{
-    return new foleys::MagicPluginEditor(magicState);
-  return new CompressorAudioProcessorEditor (*this);
-}
+// juce::AudioProcessorEditor* CompressorAudioProcessor::createEditor()
+// {
+//     return new foleys::MagicPluginEditor(magicState,BinaryData::magic_xml,BinaryData::magic_xmlSize);
+//   return new CompressorAudioProcessorEditor (*this);
+// }
 
 //==============================================================================
-void CompressorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void CompressorAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void CompressorAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void CompressorAudioProcessor::setStateInformation(const void *data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -257,7 +296,7 @@ void CompressorAudioProcessor::setStateInformation (const void* data, int sizeIn
 
 //==============================================================================
 // This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
     return new CompressorAudioProcessor();
 }

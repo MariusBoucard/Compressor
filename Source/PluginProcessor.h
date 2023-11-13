@@ -8,7 +8,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "ThreasholdLineSource.h"
+#include "resources/HorizontalLineSource.h"
+#include "resources/CompressionValue.h"
+// #include "ThreasholdLineSource.h"
 //==============================================================================
 /**
 */
@@ -49,11 +51,12 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
     void updateCompressorParameters();
-
+    void updateVolumeAngle(float inputVolume);
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    juce::AudioProcessorEditor* createEditor();
+    // juce::AudioProcessorEditor* createEditor();
+    //==============================================================================
   struct CompressorParameters
         {
             float threshold = 0.5f;
@@ -61,18 +64,25 @@ void initialiseBuilder(foleys::MagicGUIBuilder& builder) override;
             float release = 0.5f;
             float ratio = 0.9f;
         } compressorParameters;
+
     juce::dsp::Compressor<float> compressor;
     juce::AudioProcessorValueTreeState parameters;
     float getInputVolume() const { return inputVolume; }
 
-            foleys::MagicProcessorState& getMagicState() { return magicState; }
+            // foleys::MagicProcessorState& getMagicState() { return magicState; }
+                juce::Slider* thresholdSlider = nullptr;
+
 private:
         float inputVolume = 0.0f;
    // void initialiseBuilder(foleys::MagicGUIBuilder& builder);
+    //==============================================================================
+    // Your private member variables go here...
+
         foleys::MagicPlotSource* analyser = nullptr;
         foleys::MagicPlotSource* analyserOutput = nullptr;
-
-
+        HorizontalLineSource* lineSource = nullptr;
+        CompressionValue* compressionValue = nullptr;
+      // foleys::MagicProcessorState magicState { *this };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorAudioProcessor)
 };

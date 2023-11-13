@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Sx09LV" name="Compressor" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              pluginFormats="buildStandalone,buildVST3" pluginName="Ballzzy Compressor">
   <MAINGROUP id="oXUuYS" name="Compressor">
     <GROUP id="{DD661678-B72A-E686-D3DB-3AABD9675267}" name="Source">
+      <GROUP id="{559436F1-1671-1E40-B396-EEBD0C13A0EE}" name="resources">
+        <FILE id="jfQvQ9" name="CompressionValue.h" compile="0" resource="0"
+              file="Source/resources/CompressionValue.h"/>
+        <FILE id="PVvOqt" name="HorizontalLineSource.h" compile="0" resource="0"
+              file="Source/resources/HorizontalLineSource.h"/>
+        <FILE id="s9PErm" name="LookAndFeel.h" compile="0" resource="0" file="Source/resources/LookAndFeel.h"/>
+        <FILE id="hhoTwm" name="magictest.xml" compile="0" resource="1" file="Source/resources/magictest.xml"/>
+        <FILE id="lbO8Tr" name="space.jpg" compile="0" resource="1" file="Source/resources/space.jpg"/>
+        <FILE id="tz13Gn" name="ThreasholdLineSource.h" compile="0" resource="0"
+              file="Source/resources/ThreasholdLineSource.h"/>
+      </GROUP>
       <FILE id="F97vnb" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="JEE4UG" name="PluginProcessor.h" compile="0" resource="0"
@@ -31,7 +43,8 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
+               FOLEYS_ENABLE_BINARY_DATA="1"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
