@@ -2,7 +2,7 @@
 
 This program is a compressor VST plugin made using JUCE and Foleys Framework for the GUI. It allows users to adjust compressor parameters such as threshold, attack, release, and ratio using sliders. The program also features a plot that analyzes the input and output of the compressor. 
 
-![Application screenshot](./Source/resources/screenshot.PNG)
+![Application screenshot](./Source/Resources/screenshot.PNG)
 
 It implements some basics paterns to make a complête GUI, but the dsp stays juce's default one
 
